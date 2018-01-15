@@ -45,11 +45,11 @@ class EcoModel(Model):
             for y in range(self.height):
                 rand_num = random.random()
                 if rand_num < self.deg_dens:
-                    new_patch = Patch(self, (x, y), "Empty")
+                    new_patch = Patch(self, (x, y), "Degraded")
                     self.grid[y][x] = new_patch
                     self.schedule.add(new_patch)
                 elif rand_num < (self.emp_dens+self.deg_dens):
-                    new_patch = Patch(self, (x, y), "Degraded")
+                    new_patch = Patch(self, (x, y), "Empty")
                     self.grid[y][x] = new_patch
                     self.schedule.add(new_patch)
                 else:
