@@ -8,6 +8,9 @@ COLORS = {"Vegetated": "#00AA00",
           "Empty": "#880000",
           "Degraded": "#000000"}
 
+height = 50
+width = 50
+
 
 def eco_model_portrayal(patch):
     if patch is None:
@@ -20,11 +23,11 @@ def eco_model_portrayal(patch):
     return portrayal
 
 
-canvas_element = CanvasGrid(eco_model_portrayal, 50, 50, 500, 500)
+canvas_element = CanvasGrid(eco_model_portrayal, height, width, 500, 500)
 patch_chart = ChartModule([{"Label": label, "Color": color} for (label, color) in COLORS.items()])
 
 model_params = {
-    "height": 50,
-    "width": 50,
+    "height": height,
+    "width": width,
 }
 server = ModularServer(EcoModel, [canvas_element, patch_chart], "Ecosystem Dynamics", model_params)
