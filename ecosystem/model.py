@@ -31,12 +31,14 @@ class EcoModel(Model):
         self.b = 0.5
         self.emp_dens = 0.25
         self.deg_dens = 0.25
+        self.rho_veg = 1 - self.emp_dens - self.deg_dens
+        self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
-        self.grid = Grid(self.height, self.width, torus=False)
+        self.grid = Grid(self.height, self.width, torus=False) # the first paper mentions periodic boundary condition
         self.datacollector = DataCollector({"Empty": lambda m: self.count_type(m, "Empty"),
-                                "Vegetated": lambda m: self.count_type(m, "Vegetated"),
-                                "Degraded": lambda m: self.count_type(m, "Degraded")})
+                                            "Vegetated": lambda m: self.count_type(m, "Vegetated"),
+                                            "Degraded": lambda m: self.count_type(m, "Degraded")})
     
         # Define patches
         for x in range(self.width):
@@ -53,18 +55,20 @@ class EcoModel(Model):
                 else:
                     new_patch = Patch(self, (x, y), "Vegetated")  # Create a patch
                     self.grid[y][x] = new_patch
-                    self.schedule.add(new_patch)    
+                    self.schedule.add(new_patch)
         self.running = True
 
     def step(self):
         '''Advance the model by one step.'''
         # calculate rho?
+        self.count_veg = self.count_type(self, "Vegetated")
+        self.rho_veg = self.count_veg / self.num_agents
         self.schedule.step()
         self.datacollector.collect(self)
         
-        print("Vegetated: "+str(self.count_type(self, "Vegetated")))
-        print("Empty: "+str(self.count_type(self, "Empty")))
-        print("Degraded: "+str(self.count_type(self, "Degraded")))
+        print("Vegetated: " + str(self.count_veg))
+        print("Empty: " + str(self.count_type(self, "Empty")))
+        print("Degraded: " + str(self.count_type(self, "Degraded")))
     
     @staticmethod
     def count_type(model, patch_condition):

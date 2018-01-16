@@ -6,7 +6,7 @@ from ecosystem.model import EcoModel
 
 N = 20  # Model runs
 
-model = EcoModel(20,20)
+model = EcoModel(50,50)
 for i in range(N):
     model.step()
     agent_wealth = []

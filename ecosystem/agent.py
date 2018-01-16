@@ -24,16 +24,12 @@ class Patch(Agent):
                 num_veg += 1
         q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
 
-        # calculate vars:
+        # calculate rates:
         w_mor = self.model.m
         w_deg = self.model.d
-
-        count_veg = self.model.count_type(self.model, "Vegetated")
-        rho_veg = count_veg / self.model.num_agents
-
-        w_reg = (self.model.delta * rho_veg + (1 - self.model.delta) * (q / len(neighbors))) * (
-                self.model.b - self.model.c * count_veg)  # w_-_0, regeneration
-        w_col = self.model.r + self.model.f * q  # w_0_plus, colonization
+        w_col = (self.model.delta * self.model.rho_veg + (1 - self.model.delta) * (q / len(neighbors))) * (
+                self.model.b - self.model.c * self.model.rho_veg) # w_0_plus, colonization
+        w_reg = self.model.r + self.model.f * q  # w_-_0, regeneration
 
         # apply rules
         if self.condition == "Empty":
