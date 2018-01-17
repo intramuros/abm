@@ -27,7 +27,7 @@ class EcoModel(Model):
         self.r = 0.01
         self.d = 0.1
         self.f = 0.9
-        self.m = 0.1
+        self.m = m
         self.b = b
         self.emp_dens = 0.25
         self.deg_dens = 0.25
