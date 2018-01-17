@@ -15,7 +15,7 @@ import random
 
 class EcoModel(Model):
     """..."""
-    def __init__(self,  height, width):
+    def __init__(self,  height, width, b, m):
         
         #Initialize model variables
         self.height = height
@@ -28,7 +28,7 @@ class EcoModel(Model):
         self.d = 0.1
         self.f = 0.9
         self.m = 0.1
-        self.b = 0.5
+        self.b = b
         self.emp_dens = 0.25
         self.deg_dens = 0.25
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
