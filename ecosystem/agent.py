@@ -11,6 +11,7 @@ class Patch(Agent):
         self.pos = pos  # gives position
         self.unique_id = pos  # gives agents a unique ID based on position
         self.condition = cond
+        self.new_condition = cond
         self.model = model
 
     def step(self):
@@ -42,17 +43,20 @@ class Patch(Agent):
             n = random.choice([0, 1])
             new_state = states[n]
             if t[n]:  # probability
-                self.condition = new_state
+                self.new_condition = new_state
 
         elif self.condition == "Degraded":
             rand_num = random.random()
             if rand_num < w_reg:
-                self.condition = "Empty"
+                self.new_condition = "Empty"
 
         elif self.condition == "Vegetated":
             rand_num = random.random()
             if rand_num < w_mor:
-                self.condition = "Empty"
+                self.new_condition = "Empty"
+
+    def advance(self):
+        self.condition = self.new_condition
 
     def get_pos(self):
         return self.pos

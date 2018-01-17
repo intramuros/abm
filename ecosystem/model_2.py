@@ -5,32 +5,33 @@ Created on Fri Jan 12 13:56:17 2018
 Uses the Forest Fire model: https://github.com/projectmesa/mesa/blob/master/examples/forest_fire/Forest%20Fire%20Model.ipynb
 """
 from mesa import Model
-from mesa.time import RandomActivation, SimultaneousActivation
+from mesa.time import RandomActivation
 from mesa.space import Grid
 from mesa.datacollection import DataCollector
 from .agent import Patch
-
 import random
 
 
 class EcoModel(Model):
     """..."""
-    def __init__(self,  height, width, b, m):
-        
-        #Initialize model variables
+
+        # path to "config" file
+
+        self.delta = config.delta
+        self.c = config.c
+        self.r = config.r
+        self.d = config.d
+        self.f = config.f
+        self.m = config.m
+        self.b = config.b
+        self.emp_dens = config.emp_dens
+        self.deg_dens = config.deg_dens
+
         self.height = height
         self.width = width
         self.num_agents = self.width*self.height
-        self.schedule = SimultaneousActivation(self)
-        self.delta = 0.1
-        self.c = 0.2
-        self.r = 0.01
-        self.d = 0.1
-        self.f = 0.9
-        self.m = m
-        self.b = b
-        self.emp_dens = 0.25
-        self.deg_dens = 0.25
+        self.schedule = RandomActivation(self)
+
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
         self.count_veg = int(self.rho_veg*self.num_agents)
         
@@ -78,4 +79,6 @@ class EcoModel(Model):
             if patch.condition == patch_condition:
                 count += 1
         return count
+
+
 
