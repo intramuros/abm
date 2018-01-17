@@ -5,7 +5,7 @@ Created on Fri Jan 12 13:56:17 2018
 Uses the Forest Fire model: https://github.com/projectmesa/mesa/blob/master/examples/forest_fire/Forest%20Fire%20Model.ipynb
 """
 from mesa import Model
-from mesa.time import RandomActivation
+from mesa.time import RandomActivation, SimultaneousActivation
 from mesa.space import Grid
 from mesa.datacollection import DataCollector
 from .agent import Patch
@@ -21,7 +21,7 @@ class EcoModel(Model):
         self.height = height
         self.width = width
         self.num_agents = self.width*self.height
-        self.schedule = RandomActivation(self)
+        self.schedule = SimultaneousActivation(self)
         self.delta = 0.1
         self.c = 0.2
         self.r = 0.01
