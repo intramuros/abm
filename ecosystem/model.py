@@ -35,7 +35,7 @@ class EcoModel(Model):
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
-        self.grid = Grid(self.height, self.width, torus=False) # the first paper mentions periodic boundary condition
+        self.grid = Grid(self.height, self.width, torus=True) # the first paper mentions periodic boundary condition
         self.datacollector = DataCollector({"Empty": lambda m: self.count_type(m, "Empty"),
                                             "Vegetated": lambda m: self.count_type(m, "Vegetated"),
                                             "Degraded": lambda m: self.count_type(m, "Degraded")})
