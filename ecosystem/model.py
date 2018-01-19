@@ -30,9 +30,11 @@ class EcoModel(Model):
         self.f = 0.8
         self.m = m
         self.b = b
-        self.emp_dens = 0.25
-        self.deg_dens = 0.25
+        self.emp_dens = 0.1
+        self.deg_dens = 0.8
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
+        self.rho_veg = 0.1
+
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
@@ -68,9 +70,9 @@ class EcoModel(Model):
         # calculate rho?
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
-        self.schedule.step()
         self.datacollector.collect(self)
-        
+        self.schedule.step()
+
         print("Vegetated: " + str(self.count_veg))
         print("Empty: " + str(self.count_type(self, "Empty")))
         print("Degraded: " + str(self.count_type(self, "Degraded")))
@@ -84,26 +86,24 @@ class EcoModel(Model):
                 count += 1
         return count
 
+
     @staticmethod
     def calculate_local_densities(model):
         '''Helper method to count vegetated neighbours.'''
+
         qplusplus = []
         qplusminus = []
 
         for patch in model.schedule.agents:
-            neighbors = patch.model.grid.get_neighbors(patch.pos, moore=False)
-
-            num_veg = 0
-            for neighbor in neighbors:
-                if neighbor.condition == "Vegetated":
-                    num_veg += 1
-            q = num_veg / len(neighbors)
-
             if patch.condition == "Empty":
-                qplusminus.append(q)
+                qplusminus.append(patch.q)
             elif patch.condition == "Vegetated":
-                qplusplus.append(q)
+                qplusplus.append(patch.q)
 
-        return(np.mean(qplusplus), np.mean(qplusminus))
+        return (np.mean(qplusplus), np.mean(qplusminus))
+
+
+
+
 
 
