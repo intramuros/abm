@@ -10,8 +10,9 @@ from mesa.space import Grid
 from mesa.datacollection import DataCollector
 from .agent import Patch
 
-import random
 
+import random
+import numpy as np
 
 class EcoModel(Model):
     """..."""
@@ -22,24 +23,29 @@ class EcoModel(Model):
         self.width = width
         self.num_agents = self.width*self.height
         self.schedule = SimultaneousActivation(self)
-        self.delta = 0.1
-        self.c = 0.2
-        self.r = 0.01
-        self.d = 0.1
-        self.f = 0.9
+        self.delta = 0
+        self.c = 0.3
+        self.r = 0
+        self.d = 0.2
+        self.f = 0.8
         self.m = m
         self.b = b
-        self.emp_dens = 0.25
-        self.deg_dens = 0.25
+        self.emp_dens = 0.1
+        self.deg_dens = 0.8
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
+        self.rho_veg = 0.1
+
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
         self.grid = Grid(self.height, self.width, torus=True) # the first paper mentions periodic boundary condition
         self.datacollector = DataCollector({"Empty": lambda m: self.count_type(m, "Empty"),
                                             "Vegetated": lambda m: self.count_type(m, "Vegetated"),
-                                            "Degraded": lambda m: self.count_type(m, "Degraded")})
-    
+                                            "Degraded": lambda m: self.count_type(m, "Degraded"),
+                                            "qplusplus": lambda m: self.calculate_local_densities(m)[0],
+                                            "qplusminus": lambda m: self.calculate_local_densities(m)[1],
+}
+                                           )
         # Define patches
         for x in range(self.width):
             for y in range(self.height):
@@ -56,6 +62,7 @@ class EcoModel(Model):
                     new_patch = Patch(self, (x, y), "Vegetated")  # Create a patch
                     self.grid[y][x] = new_patch
                     self.schedule.add(new_patch)
+
         self.running = True
 
     def step(self):
@@ -63,13 +70,13 @@ class EcoModel(Model):
         # calculate rho?
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
-        self.schedule.step()
         self.datacollector.collect(self)
-        
+        self.schedule.step()
+
         print("Vegetated: " + str(self.count_veg))
         print("Empty: " + str(self.count_type(self, "Empty")))
         print("Degraded: " + str(self.count_type(self, "Degraded")))
-    
+
     @staticmethod
     def count_type(model, patch_condition):
         '''Helper method to count given condition in a given model.'''
@@ -78,4 +85,25 @@ class EcoModel(Model):
             if patch.condition == patch_condition:
                 count += 1
         return count
+
+
+    @staticmethod
+    def calculate_local_densities(model):
+        '''Helper method to count vegetated neighbours.'''
+
+        qplusplus = []
+        qplusminus = []
+
+        for patch in model.schedule.agents:
+            if patch.condition == "Empty":
+                qplusminus.append(patch.q)
+            elif patch.condition == "Vegetated":
+                qplusplus.append(patch.q)
+
+        return (np.mean(qplusplus), np.mean(qplusminus))
+
+
+
+
+
 
