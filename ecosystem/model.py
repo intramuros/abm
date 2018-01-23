@@ -93,7 +93,7 @@ class EcoModel(Model):
         if self.use_fl:
             q_flowlength = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
-                      * self.d_s / ((1 - q_flowelength) ** 2 * self.L)
+                      * self.d_s / ((1 - q_flowlength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
         self.datacollector.collect(self)
         self.schedule.step()
