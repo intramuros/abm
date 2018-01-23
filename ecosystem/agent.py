@@ -12,9 +12,9 @@ class Patch(Agent):
         self.condition = cond
         self.new_condition = cond
         self.model = model
-        self.q = 1
+        self.q = 0
 
-    def step(self):
+    def getQ(self):
         # create a neighbor array
         neighbors = self.model.grid.get_neighbors(self.pos, moore=False)  # von Neumann neighborhood
         # calculate the amount of neighbors
@@ -22,8 +22,22 @@ class Patch(Agent):
         for neighbor in neighbors:
             if neighbor.condition == "Vegetated":
                 num_veg += 1
-        self.q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
+        q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
+        return q
 
+    def getQminus(self):
+        # create a neighbor array
+        neighbors = self.model.grid.get_neighbors(self.pos, moore=False)  # von Neumann neighborhood
+        # calculate the amount of neighbors
+        num_veg = 0
+        for neighbor in neighbors:
+            if neighbor.condition == "Degraded":
+                num_veg += 1
+        q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
+        return q
+
+    def step(self):
+        self.q = self.getQ()
         # calculate rates:
         w_mor = self.model.m
         w_deg = self.model.d
@@ -53,6 +67,8 @@ class Patch(Agent):
             rand_num = random.random()
             if rand_num < w_mor:
                 self.new_condition = "Empty"
+
+        self.condition = self.new_condition
 
     def advance(self):
         self.condition = self.new_condition
