@@ -43,7 +43,7 @@ class EcoModel(Model):
                                             "Vegetated": lambda m: self.count_type(m, "Vegetated"),
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
-                                            "qplusminus": lambda m: self.calculate_local_densities(m)[1],
+                                            "qminusplus": lambda m: self.calculate_local_densities(m)[1],
 }
                                            )
         # Define patches
