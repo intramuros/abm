@@ -61,7 +61,8 @@ class EcoModel(Model):
                                             "Vegetated": lambda m: self.count_type(m, "Vegetated"),
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
-                                            "qplusminus": lambda m: self.calculate_local_densities(m)[1]}
+                                            "qminusplus": lambda m: self.calculate_local_densities(m)[1],
+}
                                            )
         # Define patches
         for x in range(self.width):
@@ -110,22 +111,19 @@ class EcoModel(Model):
                 count += 1
         return count
 
-
     @staticmethod
     def calculate_local_densities(model):
         '''Helper method to count vegetated neighbours.'''
 
         qplusplus = []
-        qplusminus = []
+        qminusplus = []
 
         for patch in model.schedule.agents:
-            if patch.condition == "Empty":
-                qplusminus.append(patch.q)
-            elif patch.condition == "Vegetated":
-                qplusplus.append(patch.q)
+            if patch.condition == "Vegetated":
+                qplusplus.append(patch.getQ())
+                qminusplus.append(patch.getQminus())
 
-        return np.mean(qplusplus), np.mean(qplusminus)
-
+        return (np.mean(qplusplus), np.mean(qminusplus))
 
 
 
