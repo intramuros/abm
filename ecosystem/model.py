@@ -13,32 +13,50 @@ from .agent import Patch
 
 import random
 import numpy as np
+import json
+
 
 class EcoModel(Model):
     """..."""
-    def __init__(self,  height, width, b, m):
-        
-        #Initialize model variables
-        self.height = height
-        self.width = width
+    def __init__(self, b, m, config_file):
+        # open json file with parameters
+        params = json.load(open(config_file))
+
+        # Initialize model variables
+        self.height = params["height"]
+        self.width = params["width"]
         self.num_agents = self.width*self.height
-        self.schedule =SimultaneousActivation(self)
-        self.delta = 0
-        self.c = 0.3
-        self.r = 0
-        self.d = 0.2
-        self.f = 0.8
+        self.schedule = SimultaneousActivation(self)
+        self.delta = params["delta"]
+        self.c = params["c"]
+        self.r = params["r"]
+        self.d = params["d"]
+        self.f = params["f"]
         self.m = m
+        self.b_base = b
         self.b = b
-        self.emp_dens = 0.1
-        self.deg_dens = 0.8
+        self.emp_dens = params["emp_dens"]
+        self.deg_dens = params["deg_dens"]
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
-        self.rho_veg = 0.1
+
+        # Set up flowlength parameters
+        self.use_fl = params["Use Flowlength"]
+        if self.use_fl:
+            self.patch_size = params["Patch size"]  # patch side size in meters
+            self.L = self.height
+            self.theta = np.radians(params["theta"])
+            self.d_s = self.patch_size / np.cos(self.theta)
+            self.max_fl = params["Maximum Flowlength"]
+            self.alpha_feedback = params["alpha_feedback"]
+            self.alpha_bare = params["alpha_bare"]
+            q = self.alpha_bare * (1 - self.rho_veg)
+            self.fl = (1 - self.rho_veg) * ((1 - q) * self.L - q * (1 - q**self.L)) * self.d_s / ((1-q)**2 * self.L)
+            self.b = self.b_base*(1 - self.alpha_feedback * self.fl/self.max_fl)
 
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
-        self.grid = Grid(self.height, self.width, torus=True) # the first paper mentions periodic boundary condition
+        self.grid = Grid(self.height, self.width, torus=params["Torus"]) # the first paper mentions periodic boundary condition
         self.datacollector = DataCollector({"Empty": lambda m: self.count_type(m, "Empty"),
                                             "Vegetated": lambda m: self.count_type(m, "Vegetated"),
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
@@ -62,15 +80,21 @@ class EcoModel(Model):
                     new_patch = Patch(self, (x, y), "Vegetated")  # Create a patch
                     self.grid[y][x] = new_patch
                     self.schedule.add(new_patch)
-
+        # Set values of q to the defined patches
+        for patch in self.schedule.agents:
+            patch.getQ()
         self.running = True
 
     def step(self):
         '''Advance the model by one step.'''
-        # calculate rho?
+
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
-
+        if self.use_fl:
+            q_flowlength = self.alpha_bare * (1 - self.rho_veg)
+            self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
+                      * self.d_s / ((1 - q_flowelength) ** 2 * self.L)
+            self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
         self.datacollector.collect(self)
         self.schedule.step()
 

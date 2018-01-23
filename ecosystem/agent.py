@@ -41,10 +41,8 @@ class Patch(Agent):
         # calculate rates:
         w_mor = self.model.m
         w_deg = self.model.d
-        w_col = (
-                    self.model.delta * self.model.rho_veg +
-                    (1 - self.model.delta) * self.q
-                ) * \
+        w_col = (self.model.delta * self.model.rho_veg +
+                 (1 - self.model.delta) * self.q) * \
                 (self.model.b - self.model.c * self.model.rho_veg) # w_0_plus, colonization
         w_reg = self.model.r + self.model.f * self.q  # w_-_0, regeneration
 
