@@ -82,7 +82,7 @@ class EcoModel(Model):
                     self.schedule.add(new_patch)
         # Set values of q to the defined patches
         for patch in self.schedule.agents:
-            patch.calculate_q()
+            patch.getQ()
         self.running = True
 
     def step(self):
@@ -91,9 +91,9 @@ class EcoModel(Model):
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
         if self.use_fl:
-            q = self.alpha_bare * (1 - self.rho_veg)
-            self.fl = (1 - self.rho_veg) * ((1 - q) * self.L - q * (1 - q ** self.L)) * self.d_s / (
-                    (1 - q) ** 2 * self.L)
+            q_flowlength = self.alpha_bare * (1 - self.rho_veg)
+            self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
+                      * self.d_s / ((1 - q_flowelength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
         self.datacollector.collect(self)
         self.schedule.step()
