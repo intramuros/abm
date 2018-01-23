@@ -22,7 +22,7 @@ class EcoModel(Model):
         self.height = height
         self.width = width
         self.num_agents = self.width*self.height
-        self.schedule = RandomActivation(self)
+        self.schedule =SimultaneousActivation(self)
         self.delta = 0
         self.c = 0.3
         self.r = 0
@@ -87,7 +87,8 @@ class EcoModel(Model):
                 count += 1
         return count
 
-    def calculate_local_densities(self, model):
+    @staticmethod
+    def calculate_local_densities(model):
         '''Helper method to count vegetated neighbours.'''
 
         qplusplus = []
