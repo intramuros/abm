@@ -43,7 +43,7 @@ class EcoModel(Model):
         self.use_fl = params["Use Flowlength"]
         if self.use_fl:
             self.patch_size = params["Patch size"]  # patch side size in meters
-            self.L = self.height # defined 
+            self.L = self.height
             self.theta = np.radians(params["theta"])
             self.d_s = self.patch_size / np.cos(self.theta)
             self.max_fl = params["Maximum Flowlength"]
