@@ -36,6 +36,15 @@ class Patch(Agent):
         q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
         return q
 
+    def getQnonveg(self):
+        neighbors = self.model.grid.get_neighbors(self.pos, moore=False)  # von Neumann neighborhood
+        num_non_veg = 0
+        for neighbor in neighbors:
+            if neighbor.condition != "Vegetated":
+                num_non_veg += 1
+        q = num_non_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
+        return q
+
     def step(self):
         self.q = self.getQ()
         # calculate rates:
@@ -48,13 +57,12 @@ class Patch(Agent):
 
         # apply rules
         if self.condition == "Empty":
-            states = ["Vegetated", "Degraded"]
-            t = [random.random() < w_col,
-                 random.random() < w_deg]
-            n = random.choice([0, 1])
-            new_state = states[n]
-            if t[n]:  # probability
-                self.new_condition = new_state
+            rand_num = random.random()
+            if rand_num < w_col:
+                self.new_condition = "Vegetated"
+            elif rand_num < w_col+w_deg:
+                #print("proba sum",w_col+w_deg)
+                self.new_condition = "Degraded"
 
         elif self.condition == "Degraded":
             rand_num = random.random()
