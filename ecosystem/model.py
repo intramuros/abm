@@ -93,7 +93,7 @@ class EcoModel(Model):
         self.rho_veg = self.count_veg / self.num_agents
         if self.use_fl:
             rho_minusminus = (1-float(self.datacollector.get_model_vars_dataframe().qplusplus.tail(1))) * (1 - self.rho_veg)
-            self.alpha_bare = 1.1#rho_minusminus / (1 - self.rho_veg)**2
+            self.alpha_bare = rho_minusminus / (1 - self.rho_veg)**2
             #print("alpha b", self.alpha_bare)
             q_flowlength = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
