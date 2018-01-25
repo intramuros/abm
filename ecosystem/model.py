@@ -63,7 +63,8 @@ class EcoModel(Model):
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
                                             "qminusplus": lambda m: self.calculate_local_densities(m)[1],
-}
+                                            "flowlength": lambda m: self.fl
+                                            }
                                            )
         # Define patches
         for x in range(self.width):
@@ -88,15 +89,18 @@ class EcoModel(Model):
 
     def step(self):
         '''Advance the model by one step.'''
-
+        self.datacollector.collect(self)
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
         if self.use_fl:
+            rho_minusminus = (1-float(self.datacollector.get_model_vars_dataframe().qplusplus.tail(1))) * (1 - self.rho_veg)
+            self.alpha_bare = rho_minusminus / (1 - self.rho_veg)**2
+            #print("alpha b", self.alpha_bare)
             q_flowlength = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
                       * self.d_s / ((1 - q_flowlength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
-        self.datacollector.collect(self)
+
         self.schedule.step()
 
         #print("Vegetated: " + str(self.count_veg))
