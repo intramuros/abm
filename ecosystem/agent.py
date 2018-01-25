@@ -35,7 +35,7 @@ class Patch(Agent):
                 num_veg += 1
         q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
         return q
-
+    '''
     def getQnonveg(self):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=False)  # von Neumann neighborhood
         num_non_veg = 0
@@ -44,7 +44,7 @@ class Patch(Agent):
                 num_non_veg += 1
         q = num_non_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
         return q
-
+    '''
     def step(self):
         self.q = self.getQ()
         # calculate rates:
