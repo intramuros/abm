@@ -68,6 +68,7 @@ class EcoModel(Model):
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
                                             "qminusplus": lambda m: self.calculate_local_densities(m)[1],
+                                            "qminusminus": lambda m: self.calculate_local_densities(m)[2],
                                             "flowlength": lambda m: self.fl,
                                             "b": lambda m: self.b
                                             }
@@ -102,7 +103,7 @@ class EcoModel(Model):
         # rain 
         if self.use_fl and self.water_on < self.rain_period:
             print("Rain")
-            rho_minusminus = (1-float(self.datacollector.get_model_vars_dataframe().qplusplus.tail(1))) * (1 - self.rho_veg)
+            rho_minusminus = float(self.datacollector.get_model_vars_dataframe().qminusminus.tail(1)) * (1 - self.rho_veg)
             print('rhominusminus', rho_minusminus)
             self.alpha_bare = rho_minusminus / (1 - self.rho_veg)**2
             print('alpha bare', self.alpha_bare)
@@ -117,7 +118,7 @@ class EcoModel(Model):
             
             # if maximum number of rain steps is reached, switch to no rain
             if self.water_on == self.rain_period - 1:
-            	self.water_off = 0
+                self.water_off = 0
         
         # no rain
         elif self.use_fl and self.water_off < self.no_rain_period:
@@ -151,13 +152,15 @@ class EcoModel(Model):
 
         qplusplus = []
         qminusplus = []
-
+        qminusminus = []
         for patch in model.schedule.agents:
             if patch.condition == "Vegetated":
                 qplusplus.append(patch.getQ())
                 qminusplus.append(patch.getQminus())
+            else:
+                qminusminus.append(patch.getQnonveg())
 
-        return (np.mean(qplusplus), np.mean(qminusplus))
+        return (np.mean(qplusplus), np.mean(qminusplus), np.mean(qminusminus))
 
 
 
