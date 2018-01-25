@@ -18,7 +18,7 @@ import json
 
 class EcoModel(Model):
     """..."""
-    def __init__(self, b, m, config_file):
+    def __init__(self, b, m, d,config_file):
         # open json file with parameters
         params = json.load(open(config_file))
 
@@ -31,6 +31,7 @@ class EcoModel(Model):
         self.c = params["c"]
         self.r = params["r"]
         self.d = params["d"]
+        self.d = d
         self.f = params["f"]
         self.m = m
         self.b_base = b
@@ -98,9 +99,9 @@ class EcoModel(Model):
         self.datacollector.collect(self)
         self.schedule.step()
 
-        print("Vegetated: " + str(self.count_veg))
-        print("Empty: " + str(self.count_type(self, "Empty")))
-        print("Degraded: " + str(self.count_type(self, "Degraded")))
+        #print("Vegetated: " + str(self.count_veg))
+        #print("Empty: " + str(self.count_type(self, "Empty")))
+        #print("Degraded: " + str(self.count_type(self, "Degraded")))
 
     @staticmethod
     def count_type(model, patch_condition):
