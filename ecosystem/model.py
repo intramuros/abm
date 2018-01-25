@@ -18,7 +18,7 @@ import json
 
 class EcoModel(Model):
     """..."""
-    def __init__(self, b, m, config_file):
+    def __init__(self, b, m, rain_period, no_rain_period, config_file):
         # open json file with parameters
         params = json.load(open(config_file))
 
@@ -38,6 +38,12 @@ class EcoModel(Model):
         self.emp_dens = params["emp_dens"]
         self.deg_dens = params["deg_dens"]
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
+        
+        # variables for infrequent rainfall
+        self.rain_period = rain_period
+        self.no_rain_period = no_rain_period
+        self.water_on = 0
+        self.water_off = no_rain_period
 
         # Set up flowlength parameters
         self.use_fl = params["Use Flowlength"]
@@ -62,7 +68,8 @@ class EcoModel(Model):
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
                                             "qminusplus": lambda m: self.calculate_local_densities(m)[1],
-                                            "flowlength": lambda m: self.fl
+                                            "flowlength": lambda m: self.fl,
+                                            "b": lambda m: self.b
                                             }
                                            )
         # Define patches
@@ -91,20 +98,43 @@ class EcoModel(Model):
         self.datacollector.collect(self)
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
-        if self.use_fl:
+        
+        # rain 
+        if self.use_fl and self.water_on < self.rain_period:
+            print("Rain")
             rho_minusminus = (1-float(self.datacollector.get_model_vars_dataframe().qplusplus.tail(1))) * (1 - self.rho_veg)
+            print('rhominusminus', rho_minusminus)
             self.alpha_bare = rho_minusminus / (1 - self.rho_veg)**2
+            print('alpha bare', self.alpha_bare)
             #print("alpha b", self.alpha_bare)
             q_flowlength = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
                       * self.d_s / ((1 - q_flowlength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
-
+            
+            # keep track of water steps
+            self.water_on += 1
+            
+            # if maximum number of rain steps is reached, switch to no rain
+            if self.water_on == self.rain_period - 1:
+            	self.water_off = 0
+        
+        # no rain
+        elif self.use_fl and self.water_off < self.no_rain_period:
+            print("No Rain")
+            self.b = self.b_base
+            self.water_off += 1
+            
+            # if maximum number of no rain is reached, let it rain
+            if self.water_off == self.no_rain_period:
+                self.water_on = 0
+        
+        print('b', self.b)
         self.schedule.step()
-
-        print("Vegetated: " + str(self.count_type(self, "Vegetated")))
-        print("Empty: " + str(self.count_type(self, "Empty")))
-        print("Degraded: " + str(self.count_type(self, "Degraded")))
+	
+        #print("Vegetated: " + str(self.count_type(self, "Vegetated")))
+        #print("Empty: " + str(self.count_type(self, "Empty")))
+        #print("Degraded: " + str(self.count_type(self, "Degraded")))
 
     @staticmethod
     def count_type(model, patch_condition):
