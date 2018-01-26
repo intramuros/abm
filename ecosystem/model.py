@@ -55,11 +55,12 @@ class EcoModel(Model):
             
             # variables for infrequent rainfall
             self.infr_rain = params["infr_rain"]
-            if self.infr_rain == True:
-            	self.rain_period = params["rain_period"]
-            	self.no_rain_period = params["no_rain_period"]
-            	self.water_on = 0
-            	self.water_off = self.no_rain_period
+            if self.infr_rain:
+                self.rain_period = params["rain_period"]
+                self.no_rain_period = params["no_rain_period"]
+                self.is_raining = True
+                self.water_on = 0
+                self.water_off = self.no_rain_period
    
         self.count_veg = int(self.rho_veg*self.num_agents)
         
@@ -110,28 +111,30 @@ class EcoModel(Model):
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
                       * self.d_s / ((1 - q_flowlength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
-            
+
             # infrequent rain
-            if self.infr_rain == True and self.water_on < self.rain_period:
-            
-                # keep track of water steps
-	        self.water_on += 1
-		    
-	        # if maximum number of rain steps is reached, switch to no rain
-	        if self.water_on == self.rain_period - 1:
-	            self.water_off = 0
-        
-	    # no rain
-	    elif self.infr_rain == True and self.water_off < self.no_rain_period:
-	        self.b = self.b_base
-		self.water_off += 1
-		    
-		# if maximum number of no rain is reached, let it rain
-		if self.water_off == self.no_rain_period:
-		    self.water_on = 0
-   
+            if self.infr_rain:
+                if self.is_raining:
+                    if self.water_on < self.rain_period-1:
+                        self.water_on += 1
+                    else:
+                        self.is_raining = False
+                        self.water_off = 0
+                        self.b = self.b_base
+                else:
+                    if self.water_off < self.no_rain_period-1:
+                        self.water_off += 1
+                        self.b = self.b_base
+                    else:
+                        self.is_raining = True
+                        self.water_on = 0
+
+            print("water_on", self.water_on)
+            print("water_off", self.water_off)
+            print("b", self.b)
+            print(self.water_on < self.rain_period)
         self.schedule.step()
-	
+
         #print("Vegetated: " + str(self.count_type(self, "Vegetated")))
         #print("Empty: " + str(self.count_type(self, "Empty")))
         #print("Degraded: " + str(self.count_type(self, "Degraded")))
