@@ -129,10 +129,6 @@ class EcoModel(Model):
                         self.is_raining = True
                         self.water_on = 0
 
-            print("water_on", self.water_on)
-            print("water_off", self.water_off)
-            print("b", self.b)
-            print(self.water_on < self.rain_period)
         self.schedule.step()
 
         #print("Vegetated: " + str(self.count_type(self, "Vegetated")))
