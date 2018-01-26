@@ -10,9 +10,12 @@
   "deg_dens" : 0.05,
   "Torus" : "False",
   "Use Flowlength" : "True",
-  "alpha_feedback" : 0.1,
+  "alpha_feedback" : 1,
   "Maximum Flowlength" : 26.7,
   "alpha_bare" : 1.1,
   "Patch size" : 0.5,
-  "theta" : 20
+  "theta" : 20,
+  "infr_rain" : "True",
+  "rain_period" : 10,
+  "no_rain_period" : 10 
 }

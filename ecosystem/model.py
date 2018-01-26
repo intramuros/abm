@@ -18,7 +18,7 @@ import json
 
 class EcoModel(Model):
     """..."""
-    def __init__(self, b, m, rain_period, no_rain_period, config_file):
+    def __init__(self, b, m, config_file):
         # open json file with parameters
         params = json.load(open(config_file))
 
@@ -38,12 +38,6 @@ class EcoModel(Model):
         self.emp_dens = params["emp_dens"]
         self.deg_dens = params["deg_dens"]
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
-        
-        # variables for infrequent rainfall
-        self.rain_period = rain_period
-        self.no_rain_period = no_rain_period
-        self.water_on = 0
-        self.water_off = no_rain_period
 
         # Set up flowlength parameters
         self.use_fl = params["Use Flowlength"]
@@ -58,7 +52,15 @@ class EcoModel(Model):
             q = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q) * self.L - q * (1 - q**self.L)) * self.d_s / ((1-q)**2 * self.L)
             self.b = self.b_base*(1 - self.alpha_feedback * self.fl/self.max_fl)
-
+            
+            # variables for infrequent rainfall
+            self.infr_rain = params["infr_rain"]
+            if self.infr_rain == True:
+            	self.rain_period = params["rain_period"]
+            	self.no_rain_period = params["no_rain_period"]
+            	self.water_on = 0
+            	self.water_off = self.no_rain_period
+   
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
@@ -101,36 +103,33 @@ class EcoModel(Model):
         self.rho_veg = self.count_veg / self.num_agents
         
         # rain 
-        if self.use_fl and self.water_on < self.rain_period:
-            print("Rain")
+        if self.use_fl:
             rho_minusminus = float(self.datacollector.get_model_vars_dataframe().qminusminus.tail(1)) * (1 - self.rho_veg)
-            print('rhominusminus', rho_minusminus)
             self.alpha_bare = rho_minusminus / (1 - self.rho_veg)**2
-            print('alpha bare', self.alpha_bare)
-            #print("alpha b", self.alpha_bare)
             q_flowlength = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
                       * self.d_s / ((1 - q_flowlength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
             
-            # keep track of water steps
-            self.water_on += 1
+            # infrequent rain
+            if self.infr_rain == True and self.water_on < self.rain_period:
             
-            # if maximum number of rain steps is reached, switch to no rain
-            if self.water_on == self.rain_period - 1:
-                self.water_off = 0
+                # keep track of water steps
+	        self.water_on += 1
+		    
+	        # if maximum number of rain steps is reached, switch to no rain
+	        if self.water_on == self.rain_period - 1:
+	            self.water_off = 0
         
-        # no rain
-        elif self.use_fl and self.water_off < self.no_rain_period:
-            print("No Rain")
-            self.b = self.b_base
-            self.water_off += 1
-            
-            # if maximum number of no rain is reached, let it rain
-            if self.water_off == self.no_rain_period:
-                self.water_on = 0
-        
-        print('b', self.b)
+	    # no rain
+	    elif self.infr_rain == True and self.water_off < self.no_rain_period:
+	        self.b = self.b_base
+		self.water_off += 1
+		    
+		# if maximum number of no rain is reached, let it rain
+		if self.water_off == self.no_rain_period:
+		    self.water_on = 0
+   
         self.schedule.step()
 	
         #print("Vegetated: " + str(self.count_type(self, "Vegetated")))
