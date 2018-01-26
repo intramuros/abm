@@ -52,7 +52,16 @@ class EcoModel(Model):
             q = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q) * self.L - q * (1 - q**self.L)) * self.d_s / ((1-q)**2 * self.L)
             self.b = self.b_base*(1 - self.alpha_feedback * self.fl/self.max_fl)
-
+            
+            # variables for infrequent rainfall
+            self.infr_rain = params["infr_rain"]
+            if self.infr_rain:
+                self.rain_period = params["rain_period"]
+                self.no_rain_period = params["no_rain_period"]
+                self.is_raining = True
+                self.water_on = 0
+                self.water_off = self.no_rain_period
+   
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
@@ -62,7 +71,9 @@ class EcoModel(Model):
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
                                             "qminusplus": lambda m: self.calculate_local_densities(m)[1],
-                                            "flowlength": lambda m: self.fl
+                                            "qminusminus": lambda m: self.calculate_local_densities(m)[2],
+                                            "flowlength": lambda m: self.fl,
+                                            "b": lambda m: self.b
                                             }
                                            )
         # Define patches
@@ -91,20 +102,38 @@ class EcoModel(Model):
         self.datacollector.collect(self)
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
+        
+        # rain 
         if self.use_fl:
-            rho_minusminus = (1-float(self.datacollector.get_model_vars_dataframe().qplusplus.tail(1))) * (1 - self.rho_veg)
+            rho_minusminus = float(self.datacollector.get_model_vars_dataframe().qminusminus.tail(1)) * (1 - self.rho_veg)
             self.alpha_bare = rho_minusminus / (1 - self.rho_veg)**2
-            #print("alpha b", self.alpha_bare)
             q_flowlength = self.alpha_bare * (1 - self.rho_veg)
             self.fl = (1 - self.rho_veg) * ((1 - q_flowlength) * self.L - q_flowlength * (1 - q_flowlength ** self.L))\
                       * self.d_s / ((1 - q_flowlength) ** 2 * self.L)
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
 
+            # infrequent rain
+            if self.infr_rain:
+                if self.is_raining:
+                    if self.water_on < self.rain_period-1:
+                        self.water_on += 1
+                    else:
+                        self.is_raining = False
+                        self.water_off = 0
+                        self.b = self.b_base
+                else:
+                    if self.water_off < self.no_rain_period-1:
+                        self.water_off += 1
+                        self.b = self.b_base
+                    else:
+                        self.is_raining = True
+                        self.water_on = 0
+
         self.schedule.step()
 
-        print("Vegetated: " + str(self.count_type(self, "Vegetated")))
-        print("Empty: " + str(self.count_type(self, "Empty")))
-        print("Degraded: " + str(self.count_type(self, "Degraded")))
+        #print("Vegetated: " + str(self.count_type(self, "Vegetated")))
+        #print("Empty: " + str(self.count_type(self, "Empty")))
+        #print("Degraded: " + str(self.count_type(self, "Degraded")))
 
     @staticmethod
     def count_type(model, patch_condition):
@@ -121,13 +150,15 @@ class EcoModel(Model):
 
         qplusplus = []
         qminusplus = []
-
+        qminusminus = []
         for patch in model.schedule.agents:
             if patch.condition == "Vegetated":
                 qplusplus.append(patch.getQ())
                 qminusplus.append(patch.getQminus())
+            else:
+                qminusminus.append(patch.getQnonveg())
 
-        return (np.mean(qplusplus), np.mean(qminusplus))
+        return (np.mean(qplusplus), np.mean(qminusplus), np.mean(qminusminus))
 
 
 

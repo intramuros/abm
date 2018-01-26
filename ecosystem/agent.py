@@ -36,6 +36,14 @@ class Patch(Agent):
         q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
         return q
 
+    def getQnonveg(self):
+        neighbors = self.model.grid.get_neighbors(self.pos, moore=False)  # von Neumann neighborhood
+        num_non_veg = 0
+        for neighbor in neighbors:
+            if neighbor.condition != "Vegetated":
+                num_non_veg += 1
+        q = num_non_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
+        return q
 
     def step(self):
         self.q = self.getQ()
