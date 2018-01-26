@@ -16,6 +16,6 @@
   "Patch size" : 0.5,
   "theta" : 20,
   "infr_rain" : "True",
-  "rain_period" : 10,
-  "no_rain_period" : 10 
+  "rain_period" : 5,
+  "no_rain_period" : 10
 }
