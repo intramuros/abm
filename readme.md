@@ -42,4 +42,17 @@ This file contains initial parameters for the model simulation.
 
 ## Further Reading
 
-Kefi, S., Rietkerk, M., Alados, C. L., Pueyo, Y., Papanastasis, V. P., ElAich, A., and De Ruiter, P. C. (2007a).  Spatial vegetation patterns and imminent desertification in Mediterranean arid ecosystems. Nature, 449(7159):213–217. - (https://www.sciencedirect.com/science/article/pii/S0040580906001250)
+Kefi, S., Rietkerk, M., Alados, C. L., Pueyo, Y., Papanastasis, V. P., ElAich, A., and De Ruiter, P. C. (2007a).  Spatial vegetation patterns and imminent desertification in Mediterranean arid ecosystems. Nature, 449(7159):213–217 - (https://www.nature.com/articles/nature06111)
+
+Kefi, S., Rietkerk, M., van Baalen, M., and Loreau, M. (2007b).  Local facilitation, bistability and transitions in arid ecosystems.
+Theoretical Population Biology, 71(3):367–379. - (https://www.sciencedirect.com/science/article/pii/S0040580906001250)
+
+Mayor,A.  G.,  Bautista,  S.,  Small,  E.  E.,  Dixon,  M.,  and  Bellot,  J.  (2008). Measurement  of  the  connectivity  of  runoff  source  areas  as  determined  by vegetation pattern and topography:  A tool for assessing potential water and soil losses in drylands.
+Water Resources Research, 44(10):1–13.
+
+Mayor,A. G., K ́efi, S., Bautista, S., Rodr ́ıguez, F., Carten ́ı, F., and Rietkerk, M.(2013). Feedbacks between vegetation pattern and resource loss dramatically decrease  ecosystem  resilience  and  restoration  potential  in  a  simple  dryland model. 
+Landscape Ecology, 28(5):931–942
+
+Rodriguez,  F.,  Mayor,  A.  G.,  Rietkerk,  M.,  and  Bautista,  S.  (2017).   A  null model  for  assessing  the  cover-independent  role  of  bare  soil  connectivity  as indicator of dryland functioning and dynamics. Ecological indicators. - (https://www.sciencedirect.com/science/article/pii/S1470160X1730660X)
+
+
