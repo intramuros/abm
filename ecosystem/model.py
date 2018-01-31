@@ -1,15 +1,14 @@
 
 """
-Created on Fri Jan 12 13:56:17 2018
+
 ---
-Uses the Forest Fire model: https://github.com/projectmesa/mesa/blob/master/examples/forest_fire/Forest%20Fire%20Model.ipynb
+Uses the Forest Fire model: https://github.com/projectmesa/mesa/blob/master/examples/forest_fire
 """
 from mesa import Model
 from mesa.time import RandomActivation, SimultaneousActivation
 from mesa.space import Grid
 from mesa.datacollection import DataCollector
 from .agent import Patch
-
 
 import random
 import numpy as np
@@ -35,8 +34,8 @@ class EcoModel(Model):
         self.m = m
         self.b_base = b
         self.b = b
-        self.emp_dens = params["emp_dens"]
-        self.deg_dens = params["deg_dens"]
+        self.emp_dens = params["Empty sites density"]
+        self.deg_dens = params["Degraded sites density"]
         self.rho_veg = 1 - self.emp_dens - self.deg_dens
 
         # Set up flowlength parameters
@@ -44,7 +43,7 @@ class EcoModel(Model):
         if self.use_fl:
             self.patch_size = params["Patch size"]  # patch side size in meters
             self.L = self.height
-            self.theta = np.radians(params["theta"])
+            self.theta = np.radians(params["Theta"])
             self.d_s = self.patch_size / np.cos(self.theta)
             self.max_fl = params["Maximum Flowlength"]
             self.alpha_feedback = params["alpha_feedback"]
@@ -54,10 +53,10 @@ class EcoModel(Model):
             self.b = self.b_base*(1 - self.alpha_feedback * self.fl/self.max_fl)
             
             # variables for infrequent rainfall
-            self.infr_rain = params["infr_rain"]
+            self.infr_rain = params["Use infrequent rain"]
             if self.infr_rain:
-                self.rain_period = params["rain_period"]
-                self.no_rain_period = params["no_rain_period"]
+                self.rain_period = params["Rain period"]
+                self.no_rain_period = params["No rain period"]
                 self.is_raining = True
                 self.water_on = 0
                 self.water_off = self.no_rain_period
@@ -65,17 +64,27 @@ class EcoModel(Model):
         self.count_veg = int(self.rho_veg*self.num_agents)
         
         # Set up model objects
-        self.grid = Grid(self.height, self.width, torus=params["Torus"]) # the first paper mentions periodic boundary condition
+        self.grid = Grid(self.height, self.width, torus=params["Use Torus"]) # the first paper mentions periodic boundary condition
         self.datacollector = DataCollector({"Empty": lambda m: self.count_type(m, "Empty"),
                                             "Vegetated": lambda m: self.count_type(m, "Vegetated"),
                                             "Degraded": lambda m: self.count_type(m, "Degraded"),
                                             "qplusplus": lambda m: self.calculate_local_densities(m)[0],
                                             "qminusplus": lambda m: self.calculate_local_densities(m)[1],
                                             "qminusminus": lambda m: self.calculate_local_densities(m)[2],
-                                            "flowlength": lambda m: self.fl,
                                             "b": lambda m: self.b
                                             }
                                            )
+        if self.fl:
+            self.datacollector = DataCollector({"Empty": lambda m: self.count_type(m, "Empty"),
+                                                "Vegetated": lambda m: self.count_type(m, "Vegetated"),
+                                                "Degraded": lambda m: self.count_type(m, "Degraded"),
+                                                "qplusplus": lambda m: self.calculate_local_densities(m)[0],
+                                                "qminusplus": lambda m: self.calculate_local_densities(m)[1],
+                                                "qminusminus": lambda m: self.calculate_local_densities(m)[2],
+                                                "flowlength": lambda m: self.fl,
+                                                "b": lambda m: self.b
+                                                }
+                                               )
         # Define patches
         for x in range(self.width):
             for y in range(self.height):
@@ -95,11 +104,12 @@ class EcoModel(Model):
         # Set values of q to the defined patches
         for patch in self.schedule.agents:
             patch.getQ()
+        self.datacollector.collect(self)
         self.running = True
 
     def step(self):
         '''Advance the model by one step.'''
-        self.datacollector.collect(self)
+
         self.count_veg = self.count_type(self, "Vegetated")
         self.rho_veg = self.count_veg / self.num_agents
         
@@ -113,6 +123,7 @@ class EcoModel(Model):
             self.b = self.b_base * (1 - self.alpha_feedback * self.fl / self.max_fl)
 
             # infrequent rain
+
             if self.infr_rain:
                 if self.is_raining:
                     if self.water_on < self.rain_period-1:
@@ -129,6 +140,7 @@ class EcoModel(Model):
                         self.is_raining = True
                         self.water_on = 0
 
+        self.datacollector.collect(self)
         self.schedule.step()
 
         #print("Vegetated: " + str(self.count_type(self, "Vegetated")))
