@@ -40,6 +40,32 @@ This code defines and launches the in-browser visualization for the model. Each 
 
 This file contains initial parameters for the model simulation. 
 
+## Short description of parameters in the config_file.json
+
+Detailed information on the parameters can be found in the accompanying literature 
+
+Parameter | Description | Value
+----------|-------------|----------
+	"height" | height of the model landscape | 50-100 (recommended)
+	"width"  | width of the model landscape | 50-100 (recommended) 
+	"delta"  | fraction of seeds globally dispersed | 0.1
+	"c"  | includes germination probability and competitive effect from vegetated sites | 0.2
+	"r"  | regeneration probability of a degraded site without vegetation in its neighbourhood
+	"d"  | degradation probability of empty sites
+	"f"  | positive effect of a neighbouring vegetated site on a degraded site
+	"Empty sites density"  | initial density of empty sites
+	"Degraded sites density"  | initial density of degraded sites
+	"Use Torus" | if Torus configuration is used set this parameter to 1, otherwise 0
+	"Use Flowlength" | if Flowlength parameter is used set to 1, otherwise 0
+	"alpha_feedback" | strengh of feedback between plant pattern and resource leakiness. 
+	"Maximum Flowlength" : 26.7,
+	"alpha_bare" : 1.1,
+	"Patch size" : 0.5,
+	"Theta" : 20,
+	"Use infrequent rain" : 0,
+	"Rain period" : 5,
+	"No rain period" : 10
+
 ## Further Reading
 
 Kefi, S., Rietkerk, M., Alados, C. L., Pueyo, Y., Papanastasis, V. P., ElAich, A., and De Ruiter, P. C. (2007a).  Spatial vegetation patterns and imminent desertification in Mediterranean arid ecosystems. Nature, 449(7159):213–217 - (https://www.nature.com/articles/nature06111)
