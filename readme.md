@@ -27,6 +27,10 @@ To view and run the model analyses, use the ``Analyse`` Notebook.
 
 The agent class is called **Patch**. Each Patch object is placed on the grid, and its condition is assigned at the model initialization based on user-specified parameters. Its transitions between different states are governed by the rates calculated at each step. 
 
+### ``ecosystem/agent2.py``
+
+The additional extra agent class to recreate Fig.2 in Kefi et.al (2007). Each patch has some independent parameters, instead of global parameters used in the original agent.
+
 ### ``ecosystem/model.py``
 
 The **EcoModel** class is the model container. It is instantiated with parameters ``b`` - plant establishment probability of an empty site, ``m`` - mortality probability of a vegetated site, and additional parameters found in the accompanying ``config_file.json`` file. 
@@ -40,9 +44,7 @@ This code defines and launches the in-browser visualization for the model. Each 
 
 This file contains initial parameters for the model simulation. 
 
-## Short description of parameters in the config_file.json
-
-Detailed information on the parameters can be found in the accompanying literature 
+### Short description of parameters in the config_file.json
 
 Parameter | Description | Value
 ----------|-------------|----------
@@ -63,6 +65,9 @@ Parameter | Description | Value
 "Use infrequent rain" | set to 1 if there is periodicity of rain | 0 or 1
 "Rain period" | number of timesteps with rain | Int
 "No rain period" | number of timesteps without rain | Int
+
+More detailed information on the parameters can be found in the accompanying literature. 
+
 
 ## Further Reading
 

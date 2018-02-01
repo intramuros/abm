@@ -1,6 +1,7 @@
+
 {
-  "height" : 100,
-  "width" : 100,
+  "height" : 50,
+  "width" : 50,
   "delta" : 0,
   "c" : 0.2,
   "r" : 0.01,
@@ -11,11 +12,9 @@
   "Use Torus" : 0,
   "Use Flowlength" : 1,
   "alpha_feedback" : 1,
-  "Maximum Flowlength" : 26.7,
-  "alpha_bare" : 1.1,
   "Patch size" : 0.5,
   "Theta" : 20,
-  "Use infrequent rain" : 1,
+  "Use infrequent rain" : 0,
   "Rain period" : 5,
   "No rain period" : 10
 }
