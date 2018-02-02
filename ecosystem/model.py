@@ -158,8 +158,8 @@ class EcoModel(Model):
                         self.is_raining = True
                         self.water_on = 0
 
-        self.datacollector.collect(self)
         self.schedule.step()
+        self.datacollector.collect(self)
 
     @staticmethod
     def count_type(model, patch_condition):
