@@ -46,25 +46,25 @@ This file contains initial parameters for the model simulation.
 
 ### Short description of parameters in the config_file.json
 
-Parameter | Description | Value
-----------|-------------|----------
-"height" | height of the model landscape | 100 
-"width"  | width of the model landscape | 100  
-"delta"  | fraction of seeds globally dispersed | 0.1
-"c"  | includes germination probability and competitive effect from vegetated sites | 0.2
-"r"  | regeneration probability of a degraded site without vegetation in its neighbourhood | 0.01
-"d"  | degradation probability of empty sites | 0.1
-"f"  | positive effect of a neighbouring vegetated site on a degraded site | 0.9
-"Empty sites density"  | initial density of empty sites | 0-1
-"Degraded sites density"  | initial density of degraded sites | 0-1
-"Use Torus" | set to 1 if Torus is used, otherwise set to 0 | 0 or 1
-"Use Flowlength" | set to 1 if Flowlength parameter is used , otherwise 0 | 0 or 1
-"alpha_feedback" | strengh of feedback between plant pattern and resource leakiness | 0-1 
-"Patch size" | Length of a single patch in meters | 0.5 
-"Theta" | angle of the slope in degrees | 20 
-"Use infrequent rain" | set to 1 if there is periodicity of rain | 0 or 1
-"Rain period" | number of timesteps with rain | Int
-"No rain period" | number of timesteps without rain | Int
+Parameter | Description 
+----------|-------------
+"height" | height of the model landscape 
+"width"  | width of the model landscape   
+"delta"  | fraction of seeds globally dispersed 
+"c"  | includes germination probability and competitive effect from vegetated sites 
+"r"  | regeneration probability of a degraded site without vegetation in its neighbourhood 
+"d"  | degradation probability of empty sites 
+"f"  | positive effect of a neighbouring vegetated site on a degraded site 
+"Empty sites density"  | initial density of empty sites 
+"Degraded sites density"  | initial density of degraded sites 
+"Use Torus" | set to 1 if Torus is used, otherwise set to 0 
+"Use Flowlength" | set to 1 if Flowlength parameter is used , otherwise 0 
+"alpha_feedback" | strengh of feedback between plant pattern and resource leakiness
+"Patch size" | Length of a single patch in meters 
+"Theta" | angle of the slope in degrees 
+"Use infrequent rain" | set to 1 if there is periodicity of rain 
+"Rain period" | number of timesteps with rain 
+"No rain period" | number of timesteps without rain 
 
 More detailed information on the parameters can be found in the accompanying literature. 
 
