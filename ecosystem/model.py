@@ -164,7 +164,7 @@ class EcoModel(Model):
     @staticmethod
     def count_type(model, patch_condition):
         '''
-        Helper method to count given condition in a given model
+        Helper method to count patches with a given condition in a given model
         '''
 
         count = 0
