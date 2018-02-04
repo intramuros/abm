@@ -19,7 +19,7 @@ Launch an interactive server by Running ``run.py``:
 
 Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) move sliders to set the parameters and press Reset, then Run. 
 
-To view and run the model analyses, use the ``Analyse`` Notebook.
+To view and run the model analyses, use the ``Gather and plot`` Notebook.
 
 ## Files
 
