@@ -29,16 +29,16 @@ The agent class is called **Patch**. Each Patch object is placed on the grid, an
 
 ### ``ecosystem/agent2.py``
 
-The additional extra agent class to recreate Fig.2 in Kefi et.al (2007). Each patch has some independent parameters, instead of global parameters used in the original agent.
+The additional extra agent class to recreate Fig.2 in Kefi et.al (2007).  Instead of global parameters used in the original agent implementation, some parameters are calculated for each agent independently.
 
 ### ``ecosystem/model.py``
 
-The **EcoModel** class is the model container. It is instantiated with parameters ``b`` - plant establishment probability of an empty site, ``m`` - mortality probability of a vegetated site, and additional parameters found in the accompanying ``config_file.json`` file. 
+The **EcoModel** class is the model container. It is instantiated with parameters ``b`` - plant establishment probability of an empty site, ``m`` - mortality probability of a vegetated site and a set of additional parameters found in the accompanying ``config_file.json`` file. 
 
 
 ### ``ecosystem/server.py``
 
-This code defines and launches the in-browser visualization for the model. Each cell is a rectangle, with a color based on its condition. *Vegetated* sites are green, *Empty* sites red, and *Degraded* sites are black.
+This code defines and launches the in-browser visualization for the model. Each cell is a rectangle, with a color based on its condition. *Vegetated* sites are green, *Empty* sites are red, and *Degraded* sites are grey.
 
 ### ``ecosystem/config_file.json``
 
