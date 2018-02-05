@@ -1,0 +1,20 @@
+
+{
+  "height" : 100,
+  "width" : 100,
+  "delta" : 0,
+  "c" : 0.2,
+  "r" : 0.01,
+  "d" : 0.1,
+  "f" : 0.9,
+  "Empty sites density" : 0.4,
+  "Degraded sites density" : 0.4,
+  "Use Torus" : 0,
+  "Use Flowlength" : 1,
+  "alpha_feedback" : 1,
+  "Patch size" : 0.5,
+  "Theta" : 20,
+  "Use infrequent rain" : 1,
+  "Rain period" : 5,
+  "No rain period" : 10
+}
