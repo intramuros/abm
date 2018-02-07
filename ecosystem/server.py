@@ -8,7 +8,7 @@ import json
 # define colors
 COLORS = {"Vegetated": "#00AA00",
           "Empty": "#880000",
-          "Degraded": "#000000"}
+          "Degraded": "#CCCCCC"}
 
 # grid size
 config_file = "ecosystem/config_file.json"

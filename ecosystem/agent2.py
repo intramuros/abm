@@ -4,13 +4,17 @@ import random
 
 
 class Patch(Agent):
-    """..."""
+    '''
+    Additional implementation of agent (patch).
+    Some parameters are calculated separately for each site as opposed to global parameters in the main original case.
+    '''
 
     def __init__(self, model, pos, cond):
         super().__init__(pos, model)
         self.pos = pos  # gives position
         self.unique_id = pos  # gives agents a unique ID based on position
         self.condition = cond
+        self.new_condition = cond
         self.model = model
 
     def step(self):
@@ -22,12 +26,15 @@ class Patch(Agent):
         for neighbor in neighbors:
             if neighbor.condition == "Vegetated":
                 num_veg += 1
-        q = num_veg / len(neighbors)  # MAYBE THIS SHOULD BE CALCULATED DIFFERENTLY? USE GLOBAL neighborhoods?
+        q = num_veg / len(neighbors)
 
         # params fig a
         x, y = self.pos
         rel_x = x/self.model.width
-        rel_y = 1- y/self.model.height
+        rel_y = 1 - y/self.model.height
+
+        # calculate individual parameters for each agent
+
         b = .3 + .7*rel_x
         f = rel_y
         m, r, d, c, delta = .1, 0, .2, .3, .1
@@ -58,14 +65,11 @@ class Patch(Agent):
         # m, f, d, c, delta = .1, .9, .2, .3, .1
 
         # calculate rates:
-        w_mor = m
-        w_deg = d
-        w_col = (
-                    delta * self.model.rho_veg +
-                    (1 - delta) * q
-                ) * \
-                (b - c * self.model.rho_veg) # w_0_plus, colonization
-        w_reg = r + f * q  # w_-_0, regeneration
+        w_mor = m  # mortality rate
+        w_deg = d  # degradation rate
+        w_col = (delta * self.model.rho_veg + (1 - delta) * q) * \
+                (b - c * self.model.rho_veg)  # colonization rate
+        w_reg = r + f * q  # regeneration rate
 
         # apply rules
         if self.condition == "Empty":
@@ -74,19 +78,22 @@ class Patch(Agent):
                 self.new_condition = "Vegetated"
             elif rand_num < w_deg + w_col:
                 self.new_condition = "Degraded"
-            else: self.new_condition = "Empty"
+            else:
+                self.new_condition = "Empty"
 
         elif self.condition == "Degraded":
             rand_num = random.random()
             if rand_num < w_reg:
                 self.new_condition = "Empty"
-            else: self.new_condition = "Degraded"
+            else:
+                self.new_condition = "Degraded"
 
         elif self.condition == "Vegetated":
             rand_num = random.random()
             if rand_num < w_mor:
                 self.new_condition = "Empty"
-            else: self.new_condition = "Vegetated"
+            else:
+                self.new_condition = "Vegetated"
 
     def advance(self):
         self.condition = self.new_condition

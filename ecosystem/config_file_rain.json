@@ -14,7 +14,7 @@
   "alpha_feedback" : 1,
   "Patch size" : 0.5,
   "Theta" : 20,
-  "Use infrequent rain" : 0,
+  "Use infrequent rain" : 1,
   "Rain period" : 5,
   "No rain period" : 10
 }
